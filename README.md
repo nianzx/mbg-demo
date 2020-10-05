@@ -1,0 +1,7 @@
+# mbg-demo
+Mybatis generator纯java代码反向生成demo(部分生成sql的语句仅适用mysql)
+
+
+修改ProjectConstant类中的参数后执行CodeGenerator的main方法生成mapper和service
+
+注意生成的mapper里面不允许添加修改，需要自定义sql请写在带ext后缀的文件里，方便后续修改数据库重新生成
