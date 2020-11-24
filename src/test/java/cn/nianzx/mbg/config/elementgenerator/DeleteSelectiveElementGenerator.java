@@ -29,10 +29,12 @@ public class DeleteSelectiveElementGenerator extends AbstractXmlElementGenerator
 
         sb.append("delete from ");
         sb.append(introspectedTable.getFullyQualifiedTableNameAtRuntime());
+        sb.append(" where ");
         delete.addElement(new TextElement(sb.toString()));
 
 
-        XmlElement where = new XmlElement("where");
+        XmlElement trim = new XmlElement("trim");
+        trim.addAttribute(new Attribute("prefixOverrides", "and"));
 
         sb.setLength(0);
 
@@ -43,7 +45,7 @@ public class DeleteSelectiveElementGenerator extends AbstractXmlElementGenerator
             sb.append(introspectedColumn.getJavaProperty());
             sb.append(" != null");
             isNotNullElement.addAttribute(new Attribute("test", sb.toString()));
-            where.addElement(isNotNullElement);
+            trim.addElement(isNotNullElement);
 
             sb.setLength(0);
             sb.append(" and ");
@@ -53,7 +55,7 @@ public class DeleteSelectiveElementGenerator extends AbstractXmlElementGenerator
             isNotNullElement.addElement(new TextElement(sb.toString()));
         }
 
-        delete.addElement(where);
+        delete.addElement(trim);
 
 
         parentElement.addElement(delete);
