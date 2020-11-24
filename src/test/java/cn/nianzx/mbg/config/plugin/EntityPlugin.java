@@ -1,8 +1,11 @@
 package cn.nianzx.mbg.config.plugin;
 
+import cn.nianzx.mbg.base.PrimaryKey;
 import org.mybatis.generator.api.IntrospectedColumn;
 import org.mybatis.generator.api.IntrospectedTable;
-import org.mybatis.generator.api.dom.java.*;
+import org.mybatis.generator.api.dom.java.Field;
+import org.mybatis.generator.api.dom.java.Method;
+import org.mybatis.generator.api.dom.java.TopLevelClass;
 import org.mybatis.generator.plugins.SerializablePlugin;
 
 import java.util.List;
@@ -54,6 +57,16 @@ public class EntityPlugin extends SerializablePlugin {
             // 追加ApiModelProperty注解
             topLevelClass.addImportedType("io.swagger.annotations.ApiModelProperty");
             field.addAnnotation("@ApiModelProperty" + "(value = \"" + introspectedColumn.getRemarks() + "\", name = \"" + introspectedColumn.getJavaProperty() + "\", dataType = \"" + introspectedColumn.getFullyQualifiedJavaType() + "\")");
+        }
+
+        //指示主键是哪个
+        topLevelClass.addImportedType(PrimaryKey.class.getPackage().getName() + ".PrimaryKey");
+        List<IntrospectedColumn> primaryKeyColumns = introspectedTable.getPrimaryKeyColumns();
+        for (IntrospectedColumn primaryKeyColumn : primaryKeyColumns) {
+            String fieldName = field.getName();
+            if (primaryKeyColumn.getJavaProperty().equals(fieldName)) {
+                field.addAnnotation("@PrimaryKey");
+            }
         }
         return super.modelFieldGenerated(field, topLevelClass, introspectedColumn, introspectedTable, modelClassType);
     }
